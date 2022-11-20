@@ -1,4 +1,4 @@
-name: Cache store restore
+name: Cache restore other build
 # ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - master
   pull_request:
     types: ["opened", "synchronize"]
+
 jobs:
   showinfo:
     runs-on: ubuntu-latest
@@ -13,34 +14,9 @@ jobs:
       - uses: actions/checkout@v3
       # variables: https://docs.github.com/en/actions/learn-github-actions/environment-variables
       - name: show info
-        run: echo "This job at $GITHUB_RUN_ID $GITHUB_JOB"
-  # Cache: https://github.com/actions/cache
-  job_store_cache_in_workflow:
+        run: echo "This job at $GITHUB_ACTION $GITHUB_JOB"
+  job_restore_cache:
     needs: showinfo
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: store cache
-        id: cache-dist
-        uses: actions/cache@v3
-        env:
-          cache-name: cache-dist
-        with:
-          path: dist
-          key: ${{ runner.os }}-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}
-      - name: Generate file
-        run: |
-          make generate
-          make log VALUE=$GITHUB_RUN_ID-$GITHUB_HEAD_REF-$GITHUB_JOB-$GITHUB_EVENT_NAME
-      - name: show current working directory
-        run: |
-          pwd
-          ls -la
-
-  job_restore_cache_in_workflow:
-    needs: job_store_cache_in_workflow
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
