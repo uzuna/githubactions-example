@@ -38,3 +38,29 @@ jobs:
         run: |
           make check
           make show-log
+      - name: Upload artifacts
+        id: upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+  job_restore_from_artifact:
+    needs: job_restore_cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download builded binaries
+        id: download
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+      - name: show current working directory
+        run: |
+          pwd
+          ls -la
+      - name: check cache file
+        run: |
+          make check
+          make show-log
