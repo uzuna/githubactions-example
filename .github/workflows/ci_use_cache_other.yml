@@ -1,0 +1,40 @@
+name: Cache restore other build
+# ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: ["opened", "synchronize"]
+
+jobs:
+  showinfo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # variables: https://docs.github.com/en/actions/learn-github-actions/environment-variables
+      - name: show info
+        run: echo "This job at $GITHUB_ACTION $GITHUB_JOB"
+  job_restore_cache:
+    needs: showinfo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: restore cache
+        id: cache-dist
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-dist
+        with:
+          path: dist
+          key: ${{ runner.os }}-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}
+      - name: show current working directory
+        run: |
+          pwd
+          ls -la
+      - name: check cache file
+        run: |
+          make check
+          make show-log
