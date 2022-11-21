@@ -1,0 +1,36 @@
+name: Auto release tag
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: get version
+        id: current-version
+        run: echo "VERSION=" | cat -v - VERSION | sed -z 's/[ \n]//g' >> $GITHUB_OUTPUT
+      - name: check version
+        id: check-version
+        continue-on-error: true
+        run: |
+          sed -E 's/-.*//g' VERSION > FILDERED_VERSION
+          diff VERSION FILDERED_VERSION
+      - name: Error handling
+        if: ${{ steps.check-version.outcome == 'failure' }}
+        run: |
+          echo "Error handling"
+          echo ${{ steps.check-version.outcome }}
+      - name: Create Release
+        if: ${{ steps.check-version.outcome == 'success' }}
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          tag_name: v${{steps.current-version.outputs.VERSION}}
+          release_name: Release ${{steps.current-version.outputs.VERSION}}
+          body: package release
