@@ -35,4 +35,4 @@ jobs:
         with:
           tag_name: v${{steps.current-version.outputs.VERSION}}
           release_name: Release ${{steps.current-version.outputs.VERSION}}
-          body
+          body: package release
