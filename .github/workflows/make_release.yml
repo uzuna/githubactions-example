@@ -1,7 +1,11 @@
 name: Release PR
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      release_message:
+        required: false
+        type: string
 
 jobs:
   make_release_pr:
@@ -10,8 +14,10 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
+      - name: echo input
+        run: echo get message [${{ inputs.build_id }}]
       - name: remove rc
-        run: sed -i -e 's/-rc//g' VERSION
+        run: sed -i -e 's/-.+//g' VERSION
       - name: get version
         id: current-version
         run: echo "VERSION=" | cat -v - VERSION | sed -z 's/[ \n]//g' >> $GITHUB_OUTPUT
