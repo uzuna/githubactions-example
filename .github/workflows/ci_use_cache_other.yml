@@ -64,3 +64,11 @@ jobs:
         run: |
           make check
           make show-log
+      
+      - name: remove pre-release
+        run: sed -i -E 's/-.*//g' VERSION
+      - name: get version
+        id: current-version
+        run: echo "VERSION=" | cat -v - VERSION | sed -z 's/[ \n]//g' >> $GITHUB_OUTPUT
+      - name: show version
+        run: echo update to {{steps.current-version.outputs.VERSION}}
