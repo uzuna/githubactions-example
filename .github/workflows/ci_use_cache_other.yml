@@ -71,4 +71,4 @@ jobs:
         id: current-version
         run: echo "VERSION=" | cat -v - VERSION | sed -z 's/[ \n]//g' >> $GITHUB_OUTPUT
       - name: show version
-        run: echo update to {{steps.current-version.outputs.VERSION}}
+        run: echo update to ${{steps.current-version.outputs.VERSION}}
