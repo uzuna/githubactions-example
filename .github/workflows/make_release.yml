@@ -1,16 +1,16 @@
 name: Release PR
 
 on:
-  # workflow_dispatch:
-  #   inputs:
-  #     release_message:
-  #       required: false
-  #       type: string
-  pull_request:
-    branches:
-      - master
-    types:
-      - labeled
+  workflow_dispatch:
+    inputs:
+      release_message:
+        required: false
+        type: string
+  # pull_request:
+  #   branches:
+  #     - master
+  #   types:
+  #     - labeled
 
 jobs:
   make_release_pr:
