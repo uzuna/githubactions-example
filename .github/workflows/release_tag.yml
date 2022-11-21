@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    types: ["opened", "synchronize"]
-  
 
 jobs:
   get-version:
@@ -26,8 +23,9 @@ jobs:
         if: ${{ steps.check-version.outcome == 'failure' }}
         run: |
           echo "Error handling"
-          echo ${{ steps.error_execution.outcome }}
+          echo ${{ steps.check-version.outcome }}
       - name: Create Release
+        if: ${{ steps.check-version.outcome == 'success' }}
         id: create_release
         uses: actions/create-release@latest
         env:
