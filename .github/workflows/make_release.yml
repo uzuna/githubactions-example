@@ -1,0 +1,44 @@
+name: Release PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_message:
+        required: false
+        type: string
+
+jobs:
+  make_release_pr:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: echo input
+        run: echo get message [${{ inputs.build_id }}]
+      - name: remove pre-release
+        run: sed -i -E 's/-.*//g' VERSION
+      - name: get version
+        id: current-version
+        run: echo "VERSION=" | cat -v - VERSION | sed -z 's/[ \n]//g' >> $GITHUB_OUTPUT
+      - name: show version
+        run: echo update to ${{steps.current-version.outputs.VERSION}}
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.github_token }}
+          commit-message: Release version ${{steps.current-version.outputs.VERSION}}
+          committer: GitHub Action Bot <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: feature/release/${{steps.current-version.outputs.VERSION}}
+          delete-branch: true
+          title: Release version ${{steps.current-version.outputs.VERSION}}
+          body: |
+            Release ${{steps.current-version.outputs.VERSION}}
+          labels: |
+            automated pr
+          reviewers: |
+            uzuna
+          draft: false
