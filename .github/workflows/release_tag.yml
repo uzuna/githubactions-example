@@ -27,7 +27,12 @@ jobs:
         run: |
           echo "Error handling"
           echo ${{ steps.error_execution.outcome }}
-      
-      - name: set tag
-        run: git tag -a v${{steps.current-version.outputs.VERSION}} -m "release ${{steps.current-version.outputs.VERSION}}"
-
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          tag_name: v${{steps.current-version.outputs.VERSION}}
+          release_name: Release ${{steps.current-version.outputs.VERSION}}
+          body
