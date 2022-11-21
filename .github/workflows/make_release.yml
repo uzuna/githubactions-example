@@ -25,9 +25,22 @@ jobs:
       - name: show version
         run: echo update to {{steps.current-version.outputs.VERSION}}
 
-      # - name: Create Pull Request
-      #   id: cpr
-      #   uses: peter-evans/create-pull-request@v4
-      #   with:
-      #     token: ${{ secrets.github_token }}
-      #     commit-message: Release
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.github_token }}
+          commit-message: Release version {{steps.current-version.outputs.VERSION}}
+          committer: GitHub Action Bot <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: feature/release/{{steps.current-version.outputs.VERSION}}
+          delete-branch: true
+          title: Release version {{steps.current-version.outputs.VERSION}}
+          body: |
+            Release {{steps.current-version.outputs.VERSION}}
+          labels: |
+            automated pr
+          reviewers: |
+            uzuna
+          draft: false
