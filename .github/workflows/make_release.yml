@@ -1,17 +1,20 @@
 name: Release PR
 
 on:
-  workflow_dispatch:
-    inputs:
-      release_message:
-        required: false
-        type: string
+  # workflow_dispatch:
+  #   inputs:
+  #     release_message:
+  #       required: false
+  #       type: string
+  pull_request:
+    branches:
+      - master
+    types:
+      - labeled
 
 jobs:
   make_release_pr:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - name: echo input
@@ -29,11 +32,7 @@ jobs:
         with:
           token: ${{ secrets.github_token }}
           commit-message: Release version ${{steps.current-version.outputs.VERSION}}
-          committer: GitHub Action Bot <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
           branch: feature/release/${{steps.current-version.outputs.VERSION}}
-          delete-branch: true
           title: Release version ${{steps.current-version.outputs.VERSION}}
           body: |
             Release ${{steps.current-version.outputs.VERSION}}
