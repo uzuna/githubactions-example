@@ -1,4 +1,4 @@
-name: Auto release tag
+name: Auto tag release
 
 on:
   push:
